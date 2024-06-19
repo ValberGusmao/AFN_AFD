@@ -4,6 +4,8 @@ public class Afn {
     protected String alfabeto;
     protected ArrayList<Estado> estados;
     protected Estado estadoInicial;
+    protected int tamanhoMaiorNome = 0;
+    protected int tamanhoTotalNomes = 0;
 
     //Os Estados finais são apresentado na função getEstadosFinais() por ser uma propriedades dos estados
 
@@ -27,6 +29,8 @@ public class Afn {
         if (!estados.contains(e)) {
             estadoValido(e);
             estados.add(e);
+            tamanhoMaiorNome = Math.max(e.identificao.length(), tamanhoMaiorNome);
+            tamanhoTotalNomes += e.identificao.length();
         }
     }
 
@@ -54,7 +58,7 @@ public class Afn {
 
     //Verificando se o estado tem alguma transição com simbolo fora do alfabeto
     public void alfabetoValido(Estado e) throws Exception {
-        for (Transicao t : e.getTransicaos()) {
+        for (Transicao t : e.getTransicaosList()) {
             if (alfabeto.indexOf(t.getSimbolo()) == -1) {
                 throw new Exception("O estado <" + e.getIdentificao() + "> possui uma transição {" +
                         t + "} com simbolo fora do alfabeto");
@@ -80,7 +84,7 @@ public class Afn {
     }
 
     public void estadoExiste(Estado e) throws Exception{
-        for(Transicao t: e.getTransicaos()){
+        for(Transicao t: e.getTransicaosList()){
             if (t.getOrigem() == e){
                 if (!estados.contains(t.getDestino())){
                     throw new Exception("O estado <"+e.getIdentificao()+"> possui uma transição para um estado <"+
@@ -101,6 +105,8 @@ public class Afn {
     public void estadoValido(Estado e) throws IllegalArgumentException {
     }
     //-----------------------------------------------------------------------------------
+
+
 
     public ArrayList<Estado> getEstadosFinais() {
         ArrayList<Estado> es = null;
@@ -125,7 +131,7 @@ public class Afn {
             return;
         }
 
-        int tamanhoNome = Estado.getTamanhoMaiorNome();
+        int tamanhoNome = tamanhoMaiorNome;
         String saida = preencherTabela(" ", tamanhoNome+2);
         String aux = "";
 
@@ -141,7 +147,7 @@ public class Afn {
             //-----------------------------------------
 
             for (int i = 0; i < alfabeto.length(); i++){
-                for (Transicao t : e.getTransicaos()){
+                for (Transicao t : e.getTransicaosList()){
                     if(t.getOrigem().equals(e)){
                         if(t.getSimbolo() == alfabeto.charAt(i)){
                             aux = aux.concat(t.getDestino().getIdentificao() + ", ");
@@ -162,7 +168,7 @@ public class Afn {
     }
 
     public void imprimirTabela(){
-        int tamanhoNome = Estado.getTamanhoMaiorNome();
+        int tamanhoNome = tamanhoTotalNomes;
         imprimirTabela(tamanhoNome + 2 + (estados.size()-1) * (2+tamanhoNome));
     }
 

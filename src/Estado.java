@@ -1,24 +1,31 @@
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class Estado {
-    private String identificao;
-    private ArrayList<Transicao> transicaos;
-    private boolean ehFinal;
+    protected String identificao;
+    protected Hashtable<Character, ArrayList<Transicao>> transicaos;
+    protected boolean ehFinal;
     //Serve para quando for desenhar a tabela caiba todas as combinações de estados possíveis
-    private static int tamanhoMaiorNome;
 
     public Estado(String id, boolean ehFinal) {
         this.identificao = id;
         this.ehFinal = ehFinal;
-        transicaos = new ArrayList<>();
+        transicaos = new Hashtable<>();
 
-        tamanhoMaiorNome = Math.max(identificao.length(), tamanhoMaiorNome);
     }
 
-    private void adicionarTransicao(Transicao transicao)
+    protected void adicionarTransicao(Transicao t)
     {
-        if (!transicaos.contains(transicao)) {
-            transicaos.add((transicao));
+        if (t != null) {
+            ArrayList<Transicao> tra = transicaos.get(t.getSimbolo());
+            if (tra == null){
+                tra = new ArrayList<>();
+                transicaos.put(t.getSimbolo(), tra);
+            }
+            else if (tra.contains(t)){
+                return;
+            }
+            tra.add(t);
         }
     }
 
@@ -36,32 +43,38 @@ public class Estado {
     public void adicionarTransicao(Estado destino, char simbolo){
         Transicao t = new Transicao(this, destino, simbolo);
         this.adicionarTransicao(t);
-        destino.adicionarTransicao(t);
     }
 
     public String getIdentificao() {
         return identificao;
     }
 
-    public ArrayList<Transicao> getTransicaos() {
+    public Hashtable<Character, ArrayList<Transicao>> getTransicaos() {
         return transicaos;
     }
 
-    public boolean getEhFinal() {
-        return ehFinal;
+    public ArrayList<Transicao> getTransicaosList(){
+        ArrayList<Transicao> tr = new ArrayList<>();
+        for (Character c: transicaos.keySet()){
+            tr.addAll(transicaos.get(c));
+        }
+        return tr;
     }
 
-    public static int getTamanhoMaiorNome() {
-        return tamanhoMaiorNome;
+
+    public boolean getEhFinal() {
+        return ehFinal;
     }
 
     @Override
     public String toString() {
         String tr = "[", classicao = "";
 
-        for (Transicao t : transicaos){
-            if(t.getOrigem().equals(this)){
-                tr = tr.concat(t.toString()+", ");
+        for (Character c : transicaos.keySet()){
+            for(Transicao t: transicaos.get(c)){
+                if(t.getOrigem().equals(this)){
+                    tr = tr.concat(t.toString()+", ");
+                }
             }
         }
         if (tr.contains(", ")){

@@ -1,6 +1,6 @@
 public class Transicao {
     private Estado origem, destino;
-    private char simbolo;
+    private Character simbolo;
 
     public Transicao(Estado origem, Estado destino, char simbolo) {
         this.origem = origem;
@@ -16,7 +16,7 @@ public class Transicao {
         return destino;
     }
 
-    public char getSimbolo() {
+    public Character getSimbolo() {
         return simbolo;
     }
 
