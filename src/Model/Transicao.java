@@ -1,3 +1,5 @@
+package Model;
+
 public class Transicao {
     private Estado origem, destino;
     private Character simbolo;

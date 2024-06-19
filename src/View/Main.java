@@ -1,3 +1,8 @@
+package View;
+
+import Controller.*;
+import Model.Estado;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -5,6 +10,29 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+//        //Criar um estado
+//        Model.Estado es0 = new Model.Estado("Q0",false);
+//        Model.Estado es1 = new Model.Estado("Q1", false);
+//        Model.Estado es2 = new Model.Estado("Q2", true);
+//
+//        //Criar um automato com alfabeto e estado inicial
+//        Controller.Afn affn = new Controller.Afn("ab", es0);
+//
+//        //Adicionar um novo estado
+//        affn.adicionarEstado(es1);
+//        affn.adicionarEstado(es2);
+//
+//        //Adicionar transição
+//        es0.adicionarTransicao(es0, 'a');
+//        es0.adicionarTransicao(es0, 'b');
+//        es0.adicionarTransicao(es1, 'a');
+//        es1.adicionarTransicao(es2, 'a');
+//
+//        affn.imprimirTabela();
+//
+//        Controller.Afd affd = affn.transformarEmAfd();
+//        affd.imprimirTabela();
+//
         String alfabeto = lerAlfabeto();
         ArrayList<Estado> estados = new ArrayList<>();
         Estado estadoInicial = lerEstadoInicial(estados);
@@ -33,7 +61,7 @@ public class Main {
                     afn.imprimirTabela();
                     break;
                 case 5:
-                    System.out.println("Estado Inicial: " + afn.getEstadoInicial().getIdentificao());
+                    System.out.println("Model.Estado Inicial: " + afn.getEstadoInicial().getIdentificao());
                     break;
                 case 6:
                     System.out.println("Estados Finais: " + afn.getEstadosFinais());
@@ -99,7 +127,7 @@ public class Main {
         String idOrigem = scanner.next();
         Estado origem = buscarEstado(estados, idOrigem);
         if (origem == null) {
-            System.out.println("Estado de origem nao encontrado.");
+            System.out.println("Model.Estado de origem nao encontrado.");
             return;
         }
 
@@ -107,7 +135,7 @@ public class Main {
         String idDestino = scanner.next();
         Estado destino = buscarEstado(estados, idDestino);
         if (destino == null) {
-            System.out.println("Estado de destino nao encontrado.");
+            System.out.println("Model.Estado de destino nao encontrado.");
             return;
         }
 

@@ -1,3 +1,9 @@
+package Controller;
+
+import Model.Estado;
+import Model.EstadoComposto;
+import Model.Transicao;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -12,10 +18,12 @@ public class AfnParaAfd {
 
             //Pegando as transições por cada simbolo pertencente ao automato
             for (int i = 0; i < afd.getAlfabeto().length(); i++) {
+                //Todas as transições que levam ao atual simbolo do for do estado
                 ArrayList<Transicao> tr = estado.getTransicaos().get(afd.getAlfabeto().charAt(i));
+
                 if (tr != null) {
-                    if (tr.get(0).getDestino() instanceof EstadoComposto) {
-                        EstadoComposto eC = (EstadoComposto) tr.get(0).getDestino();
+                    //Se a o destino da transição atual for um estado composto,
+                    if (tr.get(0).getDestino() instanceof EstadoComposto eC) {
                         afd.adicionarEstado(eC);
                     } else {
                         if(estado != tr.get(0).getDestino()){
@@ -25,27 +33,31 @@ public class AfnParaAfd {
                 }
             }
         }
-        afd.imprimirTabela();
         return afd;
     }
 
+    //Essa função transforma estados simples em transições compostas quando for preciso
     public void substituirTransicoesCompostas(Estado estado) {
-        Hashtable<Character, ArrayList<Transicao>> transicaos = estado.transicaos;
-        ArrayList<Estado> es = new ArrayList<>();
+        Hashtable<Character, ArrayList<Transicao>> transicaos = estado.getTransicaos();
+        ArrayList<Estado> estadosPorTransicao = new ArrayList<>();
+
+        //Passa por cada simbolo do alfabeto que o estado realiza transição
         for (Character c : transicaos.keySet()) {
+            //Guarda o destino dessas transições
             for (Transicao t : transicaos.get(c)) {
-                es.add(t.getDestino());
+                estadosPorTransicao.add(t.getDestino());
             }
-            if (es.size() > 1) {
-                EstadoComposto eC = new EstadoComposto(es);
+            //Se for maior que um, significa que terá que ser refeito como um estado composto
+            if (estadosPorTransicao.size() > 1) {
+                EstadoComposto eC = new EstadoComposto(estadosPorTransicao);
                 transicaos.get(c).clear();
                 estado.adicionarTransicao(eC, c);
             } else {
                 transicaos.get(c).clear();
-                estado.adicionarTransicao(es.get(0), c);
+                //Por ser um novo estado pro afd tem que criar uma nova transição
+                estado.adicionarTransicao(estadosPorTransicao.get(0), c);
             }
-            es.clear();
+            estadosPorTransicao.clear();
         }
-
     }
 }

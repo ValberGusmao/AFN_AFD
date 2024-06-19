@@ -1,3 +1,9 @@
+package Controller;
+
+import Model.Estado;
+import Model.Transicao;
+import View.ExibirAutomato;
+
 import java.util.ArrayList;
 
 public class Afd extends Afn {
@@ -21,28 +27,10 @@ public class Afd extends Afn {
         }
     }
 
-
-
-//    private void adicionarEstado(EstadoComposto ec){
-//        boolean liberado = true;
-//        for (Estado e: ec.estados) {
-//            try {
-//                alfabetoValido(e);
-//                estadoExiste(e);
-//            } catch (Exception ex) {
-//                throw new IllegalArgumentException(ex.getMessage());
-//            }
-//            if (!estados.contains(e)) {
-//                estadoValido(e);
-//                estados.add(e);
-//            }
-//        }
-//    }
-
     @Override
     public void imprimirTabela() {
-        int tamanhoNome = tamanhoMaiorNome;
         //Como o afd só tem uma transição por um simbolo é preciso apenas reservar espaço para o nome do maior estado
-        imprimirTabela(tamanhoNome + 2);
+        ExibirAutomato exibirAutomato = new ExibirAutomato();
+        exibirAutomato.imprimirTabela(this, 2 + tamanhoMaiorNome);
     }
 }

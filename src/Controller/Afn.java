@@ -1,3 +1,9 @@
+package Controller;
+
+import Model.Estado;
+import Model.Transicao;
+import View.ExibirAutomato;
+
 import java.util.ArrayList;
 
 public class Afn {
@@ -29,8 +35,8 @@ public class Afn {
         if (!estados.contains(e)) {
             estadoValido(e);
             estados.add(e);
-            tamanhoMaiorNome = Math.max(e.identificao.length(), tamanhoMaiorNome);
-            tamanhoTotalNomes += e.identificao.length();
+            tamanhoMaiorNome = Math.max(e.getIdentificao().length(), tamanhoMaiorNome);
+            tamanhoTotalNomes += e.getIdentificao().length();
         }
     }
 
@@ -48,7 +54,7 @@ public class Afn {
             }
         }
         catch (IllegalArgumentException ex){
-            throw new IllegalArgumentException("Esse estado não é válido pra Estado Incial" + "\n" + ex.getMessage());
+            throw new IllegalArgumentException("Esse estado não é válido pra Model.Estado Incial" + "\n" + ex.getMessage());
         }
         estadoInicial = e;
     }
@@ -100,13 +106,21 @@ public class Afn {
         }
     }
 
-    //Como não estados trabalhando com transição vazia, qualquer estado é válido no Afn
+    //Como não estados trabalhando com transição vazia, qualquer estado é válido no Controller.Afn
     //Apenas a classe afd tem a sua verificação de estado
     public void estadoValido(Estado e) throws IllegalArgumentException {
     }
     //-----------------------------------------------------------------------------------
 
+    public void imprimirTabela(){
+        ExibirAutomato exibirAutomato = new ExibirAutomato();
+        exibirAutomato.imprimirTabela(this, 2+tamanhoTotalNomes + (estados.size()-1) * 2);
+    }
 
+    public Afd transformarEmAfd(){
+        AfnParaAfd afnParaAfd = new AfnParaAfd();
+        return afnParaAfd.transfomar(this);
+    }
 
     public ArrayList<Estado> getEstadosFinais() {
         ArrayList<Estado> es = null;
@@ -120,73 +134,6 @@ public class Afn {
         }
         return es;
     }
-
-    //TODO Provavelmente vou mover essas funções para outro lugar no final--------
-    //Se der algum problema depois corrijo
-    protected void imprimirTabela(int tamanhoCelula){
-        try {
-            automatoValido();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return;
-        }
-
-        int tamanhoNome = tamanhoMaiorNome;
-        String saida = preencherTabela(" ", tamanhoNome+2);
-        String aux = "";
-
-        saida = saida.concat("|");
-        for (int i = 0; i < alfabeto.length(); i++){
-            saida = saida.concat(preencherTabela(Character.toString(alfabeto.charAt(i)), tamanhoCelula) + "|");
-        }
-        saida = saida.concat("\n");
-
-        for (Estado e : estados) {
-            //Primeira coluna a partir da segunda linha
-            saida = saida.concat(preencherTabela(e.getIdentificao(), tamanhoNome+2)+"|");
-            //-----------------------------------------
-
-            for (int i = 0; i < alfabeto.length(); i++){
-                for (Transicao t : e.getTransicaosList()){
-                    if(t.getOrigem().equals(e)){
-                        if(t.getSimbolo() == alfabeto.charAt(i)){
-                            aux = aux.concat(t.getDestino().getIdentificao() + ", ");
-                        }
-                    }
-                }
-                if (aux.contains(", ")){
-                    aux = aux.substring(0, aux.length()-2);
-                }
-                aux = preencherTabela(aux, tamanhoCelula);
-
-                saida = saida.concat(aux + "|");
-                aux = "";
-            }
-            saida = saida.concat("\n");
-        }
-        System.out.println(saida);
-    }
-
-    public void imprimirTabela(){
-        int tamanhoNome = tamanhoTotalNomes;
-        imprimirTabela(tamanhoNome + 2 + (estados.size()-1) * (2+tamanhoNome));
-    }
-
-    private String preencherTabela(String ent, int tamanho){
-        boolean dir = true;
-        String aux = ent;
-
-        while (aux.length() < tamanho){
-            if (dir)
-                aux = aux.concat(" ");
-            else{
-                aux = " ".concat(aux);
-            }
-            dir = !dir;
-        }
-        return aux;
-    }
-    //---------------------------------------------------------------------------------------
 
     @Override
     public String toString() {
@@ -217,5 +164,13 @@ public class Afn {
 
     public Estado getEstadoInicial() {
         return estadoInicial;
+    }
+
+    public int getTamanhoMaiorNome() {
+        return tamanhoMaiorNome;
+    }
+
+    public int getTamanhoTotalNomes() {
+        return tamanhoTotalNomes;
     }
 }
